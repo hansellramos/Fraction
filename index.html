@@ -2,9 +2,35 @@
 <head>
     <style>
         body{
-            margin: 0;
+            margin: 10px;
         }
-        canvas{
+        .header{
+            width: 100%;
+            height: 100px;;
+        }
+        .header .inputs{
+            width: 50%;
+            float: left;
+        }
+        .header .result{
+            width: 50%;
+            float: left;
+            text-align: right;
+        }
+        .header .result #result-content{
+            display: none;
+        }
+        #fraction-part{
+            display: inline;
+        }
+        #num-part{
+            border-bottom: 1px solid black;
+        }
+        .content{
+            width: 100%;
+            min-height:100px;
+        }
+        .content canvas{
             width: 100%;
             height: 100%;
             background: lightgray;
@@ -12,14 +38,82 @@
     </style>
 </head>
 <body>
-<canvas id="canvas"></canvas>
+<div class="header">
+    <div class="inputs">
+        <label for="numerator">Numerator: <input type="number" min="1" id="numerator" value="1"></label>
+        <br />
+        <label for="denominator">Denominator: <input type="number" min="1" id="denominator" value="5"></label>
+        <br />
+        <button onclick="draw()">Draw</button>
+    </div>
+    <div class="result">
+        <div id="result-content">
+            Mixed Fraction:
+            <span id="entire-part">1</span>
+            <table id="fraction-part">
+                <tr class="num"><td id="num-part">1</td></tr>
+                <tr class="den"><td id="den-part">5</td></tr>
+            </table>
+            <br />
+            Decimal: <span id="decimal"></span>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <canvas id="canvas"></canvas>
+</div>
 <script>
     var canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     var ctx = canvas.getContext("2d");
 
-    var radius = 40;
+    var num, den, dec, radius = 40, space = 5;
+
+    function draw(){
+        getValues();
+        calcDecimal();
+        calcFraction();
+        document.getElementById("result-content").style.display = 'block';
+    }
+    function getValues(){
+        num = Math.abs(parseInt(document.getElementById("numerator").value));
+        den = Math.abs(parseInt(document.getElementById("denominator").value));
+        dec = num/den;
+    }
+    function calcDecimal(){
+        document.getElementById("decimal").innerHTML = dec;
+    }
+    function calcFraction(){
+        var entirePart = parseInt(dec);
+        document.getElementById("entire-part").innerHTML = entirePart;
+        document.getElementById("entire-part").style.display = entirePart>0 ? 'inline' : 'none';
+        var numPart = (num-(entirePart*den));
+        document.getElementById("num-part").innerHTML = numPart;
+        document.getElementById("fraction-part").style.display = numPart>0 ? 'inline' : 'none';
+        document.getElementById("den-part").innerHTML = den;
+        drawFractionAsCircles(num, den);
+    }
+
+    function drawFractionAsCircles(numerator, denominator){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var entire = parseInt(numerator/denominator);
+        var x = space/2 + radius;
+        var y = space/2 + radius;
+        for(var p=0;p<entire;p++){
+            drawPie(x, y, denominator, denominator);
+            x += space + radius*2;
+            if((x+radius+(space/2))>canvas.width){
+                x = space/2 + radius;
+                y += space + radius*2;
+            }
+        }
+        numerator = numerator-(entire*denominator);
+        if(numerator>0) {
+            drawPie(x, y, numerator, denominator);
+        }
+
+    }
 
     function drawPie(cx, cy, pieces, totalPieces){
         var currentAngle=Math.PI/2*3;
@@ -49,6 +143,11 @@
                 ctx.stroke();
             }
         }
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, cy-radius);
+        ctx.stroke();
     }
 
     drawPie(50, 50, 4, 5);
