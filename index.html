@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Fraction</title>
+    <style>
+        body{
+            margin: 0;
+        }
+        canvas{
+            width: 100%;
+            height: 100%;
+            background: lightgray;
+        }
+    </style>
 </head>
 <body>
+<canvas id="canvas"></canvas>
+<script>
+    var canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var ctx = canvas.getContext("2d");
 
+    var radius = 40;
+
+    function drawPie(cx, cy, pieces, totalPieces){
+        var currentAngle=Math.PI/2*3;
+        var angle = Math.PI/totalPieces*2;
+        var endAngle = (Math.PI/totalPieces*2)*pieces;
+        var x = cx;
+        var y = cy;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, cy-radius);
+        ctx.arc(cx, cy, radius, 0-Math.PI/2, (0-Math.PI/2)+endAngle);
+        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx, cy-radius);
+        ctx.stroke();
+        ctx.fillStyle = 'yellow';
+        ctx.fill();
+
+        for(i=1; i<totalPieces;i++){
+            if(i<=pieces) {
+                currentAngle += angle;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                x = cx + Math.cos(currentAngle) * radius;
+                y = cy + Math.sin(currentAngle) * radius;
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    drawPie(50, 50, 4, 5);
+</script>
 </body>
 </html>
