@@ -32,7 +32,6 @@
         }
         .content canvas{
             width: 100%;
-            height: 100%;
             background: lightgray;
         }
     </style>
@@ -65,10 +64,10 @@
 <script>
     var canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.height = window.innerHeight-100;
     var ctx = canvas.getContext("2d");
 
-    var num, den, dec, radius = 40, space = 5;
+    var num, den, dec, radius = 100, space = 10;
 
     function draw(){
         getValues();
@@ -82,7 +81,7 @@
         dec = num/den;
     }
     function calcDecimal(){
-        document.getElementById("decimal").innerHTML = dec;
+        document.getElementById("decimal").innerHTML = Math.round(dec*10000)/10000;
     }
     function calcFraction(){
         var entirePart = parseInt(dec);
@@ -112,7 +111,6 @@
         if(numerator>0) {
             drawPie(x, y, numerator, denominator);
         }
-
     }
 
     function drawPie(cx, cy, pieces, totalPieces){
@@ -122,6 +120,7 @@
         var x = cx;
         var y = cy;
 
+        //Fill circle after draw pieces
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx, cy-radius);
@@ -132,6 +131,7 @@
         ctx.fillStyle = 'yellow';
         ctx.fill();
 
+        //stroke pieces
         for(i=1; i<totalPieces;i++){
             if(i<=pieces) {
                 currentAngle += angle;
@@ -144,13 +144,12 @@
             }
         }
 
+        //stroke vertical line
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx, cy-radius);
         ctx.stroke();
     }
-
-    drawPie(50, 50, 4, 5);
 </script>
 </body>
 </html>
